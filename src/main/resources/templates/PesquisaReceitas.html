@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{LayoutPadrao}">
+
+    
+<head>
+	<title>Pesquisa de receitas</title>
+</head>
+
+<section layout:fragment="conteudo">
+
+<div th:replace="/mensagens/Mensagem"></div>
+
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<div class="panel-heading">
+			<div class="clearfix">
+	   			<h1 class="panel-title titulo-panel">Pesquisa de receitas</h1>
+	   			<a class="btn btn-link link-panel" href="/receitas/nova">
+	   				<span class="glyphicon glyphicon-plus"></span>
+	   			</a>
+	   		</div>
+	   	</div>
+	   	
+	   	</div>
+	   	
+	   	<div class="panel-body">
+	   	
+	   <form method="GET" action="/receitas" th:object="${filtro}" class="form-horizontal">
+
+				<div class="form-group">
+
+					<div class="col-sm-4">
+						<div class="input-group">
+							<input class="form-control"
+								placeholder="Qual título voce está procurando?"
+								autofocus="autofocus" th:field="*{descricao}"></input>
+							<span class="input-group-btn">
+								<button type="submit" class="btn btn-default">
+									<i class="glyphicon glyphicon-search"></i>
+								</button>
+							</span>
+
+						</div>
+
+					</div>
+				</div>
+
+			</form>
+	   	
+	   	
+	   		<table class="table table-bordered table-striped">
+	   			<thead>
+	   				<tr>
+	   					<th class="text-center col-md-1">#</th>
+	   					<th>Decrição</th>
+	   					<th class="text-center col-md-2">Data de vencimento</th>
+	   					<th class="text-right col-md-2">Valor</th>
+	   					<th class="text-center col-md-2">Status</th>
+	   					<th class="col-md-2"></th>
+	   				</tr>
+	   			</thead>
+	   			<tbody>
+	   				<tr th:each="receita : ${receitas}">
+						<td class="text-center" th:text="${receita.codigo}"></td>
+						<td  th:text="${receita.descricao}"></td>
+						<td class="text-center" th:text="${{receita.dataVencimento}}"></td>
+						<td class="text-right" th:text="|R$ ${{receita.valor}}|"></td>
+						<td class="text-center" th:attr="data-role=${receita.codigo}" >
+							<span class="label" th:text="${receita.status.descricao}"
+								th:classappend="${receita.pendente ? 'label-danger' : 'label-success'}"></span>
+						</td>
+						<td class="text-center">
+							<a class="btn btn-link btn-sx" th:href="@{/receitas/{codigo}(codigo=${receita.codigo})}"
+							rel="tooltip" title="Editar">
+								<span class="glyphicon glyphicon-pencil"></span>
+							</a>
+							
+							<a class="btn btn-link btn-sx" data-toggle="modal" data-target="#confirmacaoExclusaoReceitaModal"
+							th:attr="data-codigo=${receita.codigo}, data-descricao=${receita.descricao}"
+							rel="tooltip" title="Excluir">
+								<span class="glyphicon glyphicon-remove"></span>
+							</a>
+							
+							<a class="btn btn-link btn-xs js-atualizar-status" th:if="${receita.pendente}"
+	   								title="Receber" rel="tooltip" data-placement="top"
+	   								th:attr="data-codigo=${receita.codigo}"
+	   								th:href="@{/receitas/{codigo}/receber(codigo=${receita.codigo})}">
+	   							<span class="glyphicon glyphicon-check"></span>
+	   						</a>
+							
+						</td>
+					</tr>
+	   				<tr>
+	   					<td colspan="6">Nenhum receita foi encontrada</td>
+	   				</tr>
+	   			</tbody>
+	   		</table>
+	   	</div>
+	   	
+	   	<div th:replace="/modal/DialogoConfirmacaoExclusaoReceita"></div>
+	   	
+	</div>
+</section>
+</html>
